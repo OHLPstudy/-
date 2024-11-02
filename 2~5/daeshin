@@ -1,0 +1,85 @@
+1. Java 13 버전부터 Swtich에 yield 키워드를 사용할 수 있다. 해당 키워드의 의미는 무엇인가?
+
+// 기존 switch 문
+int score;
+switch (grade) {
+    case "A":
+        score = 100;
+        break;
+    case "B":
+        score = 80;
+        break;
+    default:
+        score = 60;
+}
+
+// java 13 버전 switch문
+in t score2 = switch(grade) {
+	case "A" -> 100;
+	case "B" -> { 		int result = 100 - 20; 
+		yield result;
+	}
+	default -> 60;
+}
+
+yield를 사용하여 블록 내에서 여러 줄의 코드와 복잡한 로직을 처리한 후 결과값을 switch 표현식으로 반환할 수 있다.
+
+기존의 switch문은 단순히 특정 구문을 실행하는 용도로 사용되었습니다. 반환할 값이 필요할 경우 별도로 변수를 선언하고, 
+각 case에서 이 변수를 변경해야 했는데 java 13 버전의 switch 표현식은 표현식 자체가 값을 반환하므로 직접 변수에 할당할 수 있다.
+
+——————————————————————————————————————————————————————————
+2. 논리연산자 중 AND 구분을 위해 사용하는 연산자는 &&와 &의 차이점을 설명하시오
+
+&& 는 논리 AND 연산자로 
+왼쪽 피연산자가 false로 평가되면 오른쪽 피연산자는 평가되지 않고, false를 반환한다.
+예: false && someFunction()에서는 someFunction()이 실행되지 않는다.
+
+&는 비트 AND 연산자로
+예: 5 & 3은 이진수로 계산하면 0101 & 0011이 되어 결과는 0001 (즉, 1)이 된다.
+
+——————————————————————————————————————————————————————————
+3. Java에서 문자열 데이터를 선언하는 방법에는 String과 StringBuillder 또는 StringBuffer가 있다. 
+String과 StringBuilder 사용에 대한 차이점을 알기위해 +연산을 통해 연산 시 마다의 String 변수의 해시코드를 확인해 StringBuilder와 String의 차이점을 알 수 있게 코드작성 해시코드 - 어플리케이션 실행하는동안 그 객체의 hashCode 메소드는 몇 번을 호출해도 일관되게 항상 같은 값을 반환해야 한다.
+
+1. String - 문자열을 저장하고 조작할 때 사용
+2. StringBuilder - 효율적인 문자열 조작 기능이 필요할 때 사용  이런 개념으로 책에서 봤는데 왜 차이점을 알기위해 +연산을 하고, 해시코드를 비교하는지 이해 못 함 
+
+String은 불변(immutable) 객체로, + 연산을 수행할 때마다 새로운 문자열 객체가 생성되기 때문에 메모리와 성능에 영향을 줄 수 있습니다. 
+반면 StringBuilder는 가변(mutable) 객체로, 문자열을 변경해도 새로운 객체를 생성하지 않습니다.
+
+public class Main {
+    public static void main(String[] args) {
+        // String 사용 예제
+        String str = "Hello";
+        System.out.println("String 초기 해시코드: " + System.identityHashCode(str));
+        for (int i = 1; i <= 5; i++) {
+            str += " World";  // + 연산을 통해 문자열을 더함
+            System.out.println("String 해시코드 (추가 후): " + System.identityHashCode(str));
+        }
+
+        System.out.println("\n---\n");
+
+        // StringBuilder 사용 예제
+        StringBuilder sb = new StringBuilder("Hello");
+        System.out.println("StringBuilder 초기 해시코드: " + System.identityHashCode(sb));
+        for (int i = 1; i <= 5; i++) {
+            sb.append(" World");  // append를 통해 문자열을 더함
+            System.out.println("StringBuilder 해시코드 (추가 후): " + System.identityHashCode(sb));
+        }
+    }
+}
+
+String: + 연산을 사용할 때마다 새로운 객체가 생성되므로 매번 다른 해시코드가 출력됩니다.
+StringBuilder: append 메서드를 사용하여 문자열을 추가해도 동일 객체를 사용하므로 해시코드가 변하지 않습니다.
+
+String 초기 해시코드: 12345678
+String 해시코드 (추가 후): 87654321
+String 해시코드 (추가 후): 23456789
+...
+
+StringBuilder 초기 해시코드: 34567890
+StringBuilder 해시코드 (추가 후): 34567890
+StringBuilder 해시코드 (추가 후): 34567890
+...
+
+위 예시를 통해 String은 변경 시마다 새 객체가 생성되지만, StringBuilder는 같은 객체를 사용해 성능이 더 효율적이라는 것을 알 수 있습니다.
